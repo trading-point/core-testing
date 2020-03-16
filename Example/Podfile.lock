@@ -1,0 +1,46 @@
+PODS:
+  - CoreTesting (0.1.0):
+    - LayoutTest (~> 6.0.1)
+    - SnapshotTesting (~> 1.7.2)
+  - LayoutTest (6.0.1):
+    - LayoutTest/TestCase (= 6.0.1)
+  - LayoutTest/TestCase (6.0.1):
+    - LayoutTestBase/Autolayout (= 6.0.1)
+    - LayoutTestBase/Catalog (= 6.0.1)
+    - LayoutTestBase/Config (= 6.0.1)
+    - LayoutTestBase/Core (= 6.0.1)
+    - LayoutTestBase/UIViewHelpers (= 6.0.1)
+  - LayoutTestBase/Autolayout (6.0.1)
+  - LayoutTestBase/Catalog (6.0.1):
+    - LayoutTestBase/Core
+  - LayoutTestBase/Config (6.0.1)
+  - LayoutTestBase/Core (6.0.1):
+    - LayoutTestBase/Config
+  - LayoutTestBase/UIViewHelpers (6.0.1):
+    - LayoutTestBase/Config
+  - SnapshotTesting (1.7.2)
+
+DEPENDENCIES:
+  - CoreTesting (from `../`)
+  - LayoutTest (~> 6.0.1)
+  - SnapshotTesting (~> 1.7.2)
+
+SPEC REPOS:
+  trunk:
+    - LayoutTest
+    - LayoutTestBase
+    - SnapshotTesting
+
+EXTERNAL SOURCES:
+  CoreTesting:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  CoreTesting: afcd2959dcdc5ebc3633fbb76fdc3528c56c7551
+  LayoutTest: f05ff965f6a090fd00f289d0f52fa12b502388fa
+  LayoutTestBase: e087799bca531a58f5e8070cde036fb6185a76fa
+  SnapshotTesting: 8caa6661fea7c8019d5b46de77c16bab99c36c5c
+
+PODFILE CHECKSUM: 59a2604bb8cb1194a9fd907209b24292e448b3aa
+
+COCOAPODS: 1.9.1
