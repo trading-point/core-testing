@@ -42,7 +42,7 @@ Includes strategies for snapshot testing the view and layout tests.
   s.source_files = 'CoreTesting/Classes/**/*.swift'
   
   s.dependency 'SnapshotTesting', '~> 1.7.2'
-  s.dependency 'LayoutTest', '~> 6.0.1'
+  s.dependency 'LayoutTest/Swift', '~> 6.0.1'
     
   s.frameworks = "XCTest"
   

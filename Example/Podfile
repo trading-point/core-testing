@@ -7,7 +7,7 @@ target 'CoreTesting_Example' do
     inherit! :search_paths
 
     pod 'SnapshotTesting', '~> 1.7.2'
-    pod 'LayoutTest', '~> 6.0.1'
+    pod 'LayoutTest/Swift', '~> 6.0.1'
     pod 'CoreTesting', :path => '../'
     
   end
