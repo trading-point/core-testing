@@ -30,7 +30,7 @@ Testing framework that includes helpers and utils for writing iOS tests.
 Includes strategies for snapshot testing the view and layout tests.
                        DESC
 
-  s.homepage         = 'https://github.com/gsoti/CoreTesting'
+  s.homepage         = 'https://github.com/trading-point/core-testing.git'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'gsoti' => 'ge.sotiropoulos@gmail.com' }
