@@ -34,7 +34,7 @@ Includes strategies for snapshot testing the view and layout tests.
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'gsoti' => 'ge.sotiropoulos@gmail.com' }
-  s.source           = { :git => 'https://github.com/gsoti/CoreTesting.git', :tag => s.version.to_s }
+  s.source           = { :git => 'https://github.com/trading-point/core-testing.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '12.0'

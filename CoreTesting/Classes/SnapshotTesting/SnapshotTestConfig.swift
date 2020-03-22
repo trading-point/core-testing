@@ -16,7 +16,7 @@ public func assertImageSnapshot(
     let height = config.fixedSize?.height
     let container = SnapshotContainer(view(), width: width, height: height)
 
-    diffTool = "ksdiff"
+    diffTool = SnapshotTestConfig.diffTool
 
     assertSnapshot(
         matching: container,
@@ -88,6 +88,14 @@ public struct ImageSnapshotConfig {
             preferredContentSizeCategory: preferredContentSizeCategory
         )
     }
+    
+    static func iPhoneX(userInterfaceStyle: UIUserInterfaceStyle, preferredContentSizeCategory: UIContentSizeCategory) -> ImageSnapshotConfig {
+        ImageSnapshotConfig(
+            viewImageConfig: .iPhoneX,
+            userInterfaceStyle: userInterfaceStyle,
+            preferredContentSizeCategory: preferredContentSizeCategory
+        )
+    }
 }
 
 extension ImageSnapshotConfig {
@@ -117,12 +125,13 @@ extension ImageSnapshotConfig {
 
 public enum SnapshotTestConfig {
     public static var record = false
+    public static var diffTool: String? = "ksdiff"
 
     // config generation for views
     public enum View {
         public static func small(testing: (ImageSnapshotConfig) -> Void) {
             testing(
-                .iPhoneSe(
+                .iPhoneX(
                     userInterfaceStyle: .light,
                     preferredContentSizeCategory: .large
                 )
@@ -131,11 +140,11 @@ public enum SnapshotTestConfig {
 
         public static func all(testing: (ImageSnapshotConfig) -> Void) {
             let configs: [ImageSnapshotConfig] = [
-                .iPhoneSe(
+                .iPhoneX(
                     userInterfaceStyle: .light,
-                    preferredContentSizeCategory: .accessibilityExtraExtraExtraLarge
+                    preferredContentSizeCategory: .large
                 ),
-                .iPhone8Plus(
+                .iPhoneSe(
                     userInterfaceStyle: .dark,
                     preferredContentSizeCategory: .large
                 ),
