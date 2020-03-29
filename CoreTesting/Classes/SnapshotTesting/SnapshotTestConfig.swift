@@ -1,6 +1,12 @@
 import SnapshotTesting
 import UIKit
 
+/**
+ Runs the snapshot test for the provided view and configuration
+
+ Will fail with a "zero size" assertion if size cannot be determined.
+*/
+
 public func assertImageSnapshot(
     matching view: @autoclosure () -> UIView,
     config: ImageSnapshotConfig,
@@ -12,7 +18,7 @@ public func assertImageSnapshot(
     line: UInt = #line
 ) {
     let viewImageConfig = config.viewImageConfig
-    let width = config.fixedSize?.width ?? viewImageConfig.size?.width
+    let width = config.fixedSize?.width
     let height = config.fixedSize?.height
     let container = SnapshotContainer(view(), width: width, height: height)
 
@@ -30,105 +36,26 @@ public func assertImageSnapshot(
     )
 }
 
-public struct ImageSnapshotConfig {
-    public let viewImageConfig: ViewImageConfig
-    public var fixedSize: FixedSize?
-
-    private init(
-        viewImageConfig: ViewImageConfig,
-        userInterfaceStyle: UIUserInterfaceStyle,
-        preferredContentSizeCategory: UIContentSizeCategory
-    ) {
-        var newViewImageConfig = viewImageConfig
-        newViewImageConfig.traits = UITraitCollection(traitsFrom: [
-            viewImageConfig.traits,
-            UITraitCollection(displayScale: 2.0),
-            UITraitCollection(userInterfaceStyle: userInterfaceStyle),
-            UITraitCollection(preferredContentSizeCategory: preferredContentSizeCategory),
-        ])
-
-        self.viewImageConfig = newViewImageConfig
-    }
-
-    static func fixed(
-        _ fixedSize: FixedSize,
-        userInterfaceStyle: UIUserInterfaceStyle,
-        preferredContentSizeCategory: UIContentSizeCategory
-    ) -> ImageSnapshotConfig {
-        let viewImageConfig = ViewImageConfig(safeArea: .zero, size: nil, traits: UITraitCollection())
-        var config = ImageSnapshotConfig(
-            viewImageConfig: viewImageConfig,
-            userInterfaceStyle: userInterfaceStyle,
-            preferredContentSizeCategory: preferredContentSizeCategory
-        )
-        config.fixedSize = fixedSize
-        return config
-    }
-
-    static func iPhoneSe(userInterfaceStyle: UIUserInterfaceStyle, preferredContentSizeCategory: UIContentSizeCategory) -> ImageSnapshotConfig {
-        ImageSnapshotConfig(
-            viewImageConfig: .iPhoneSe,
-            userInterfaceStyle: userInterfaceStyle,
-            preferredContentSizeCategory: preferredContentSizeCategory
-        )
-    }
-
-    static func iPhone8(userInterfaceStyle: UIUserInterfaceStyle, preferredContentSizeCategory: UIContentSizeCategory) -> ImageSnapshotConfig {
-        ImageSnapshotConfig(
-            viewImageConfig: .iPhone8,
-            userInterfaceStyle: userInterfaceStyle,
-            preferredContentSizeCategory: preferredContentSizeCategory
-        )
-    }
-
-    static func iPhone8Plus(userInterfaceStyle: UIUserInterfaceStyle, preferredContentSizeCategory: UIContentSizeCategory) -> ImageSnapshotConfig {
-        ImageSnapshotConfig(
-            viewImageConfig: .iPhone8Plus,
-            userInterfaceStyle: userInterfaceStyle,
-            preferredContentSizeCategory: preferredContentSizeCategory
-        )
-    }
-    
-    static func iPhoneX(userInterfaceStyle: UIUserInterfaceStyle, preferredContentSizeCategory: UIContentSizeCategory) -> ImageSnapshotConfig {
-        ImageSnapshotConfig(
-            viewImageConfig: .iPhoneX,
-            userInterfaceStyle: userInterfaceStyle,
-            preferredContentSizeCategory: preferredContentSizeCategory
-        )
-    }
-}
-
-extension ImageSnapshotConfig {
-    public enum FixedSize {
-        case width(CGFloat)
-        case widthAndHeight(CGFloat, CGFloat)
-
-        var width: CGFloat {
-            switch self {
-            case let .width(value):
-                return value
-            case let .widthAndHeight(value, _):
-                return value
-            }
-        }
-
-        var height: CGFloat? {
-            switch self {
-            case let .widthAndHeight(_, value):
-                return value
-            case .width:
-                return nil
-            }
-        }
-    }
-}
-
 public enum SnapshotTestConfig {
     public static var record = false
     public static var diffTool: String? = "ksdiff"
 
-    // config generation for views
+    
     public enum View {
+        /**
+         Used to test how the view looks like in **small width phones**.
+         
+         Generates one single iPhoneSe size configuration (iPhoneX
+         for WorkCo) with **fixed width and flexible height**.
+         
+         ~~~
+         SnapshotTestConfig.View.small { config in
+             assertImageSnapshot(matching: aView, config: config)
+         }
+         ~~~
+
+        - Parameter testing: The closure that returns the configuration to be tested.
+        */
         public static func small(testing: (ImageSnapshotConfig) -> Void) {
             testing(
                 .iPhoneX(
@@ -138,6 +65,21 @@ public enum SnapshotTestConfig {
             )
         }
 
+        /**
+         Used to test how the view looks like in **small and large width phones**.
+         
+         Generates two size configurations (one for iPhoneSe and one for iPhone8Plus
+         (iPhoneX and iPhoneSe for WorkCo) with **fixed width and flexible height**.
+         
+         ~~~
+         SnapshotTestConfig.View.all { config in
+             assertImageSnapshot(matching: aView, config: config)
+         }
+         ~~~
+
+        - Parameter testing: The closure that returns the configurations to be tested.
+         Called twice, once per configuration returned.
+        */
         public static func all(testing: (ImageSnapshotConfig) -> Void) {
             let configs: [ImageSnapshotConfig] = [
                 .iPhoneX(
@@ -152,12 +94,34 @@ public enum SnapshotTestConfig {
             combos(configs: configs, testing: testing)
         }
 
-        public static func combos(configs: [ImageSnapshotConfig], testing: (ImageSnapshotConfig) -> Void) {
+        static func combos(configs: [ImageSnapshotConfig], testing: (ImageSnapshotConfig) -> Void) {
             configs.forEach { config in
                 testing(config)
             }
         }
 
+        /**
+         Used to test how the view looks like in **custom fixed size**.
+         
+         Generates one single size configuration with either **fixed width
+         and flexible height** or **fixed width and height**.
+         
+         ~~~
+         SnapshotTestConfig.View.fixed(.width(200)) { config in
+             assertImageSnapshot(matching: aView, config: config)
+         }
+         ~~~
+         
+         or
+         
+         ~~~
+         SnapshotTestConfig.View.fixed(.widthAndHeight(200, 100)) { config in
+             assertImageSnapshot(matching: aView, config: config)
+         }
+         ~~~
+
+        - Parameter testing: The closure that returns the configurations to be tested.
+        */
         public static func fixed(_ fixedSize: ImageSnapshotConfig.FixedSize, testing: (ImageSnapshotConfig) -> Void) {
             testing(
                 .fixed(fixedSize,
