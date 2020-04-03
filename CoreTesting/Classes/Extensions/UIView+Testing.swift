@@ -23,6 +23,12 @@ extension UIView {
 
             if let label = view as? UILabel {
                 label.textColor = .black
+                // increase the text by x4
+                if let text = label.text {                    
+                    label.text = (1...4).reduce("") { (result, _) -> String in
+                        return result + " " + text
+                    }
+                }
             }
             if view.subviews.count > 0 {
                 view.visuallyDebugLayout(&index)
