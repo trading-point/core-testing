@@ -27,17 +27,20 @@ PODS:
     - LayoutTestBase/UIViewHelpers
   - LayoutTestBase/UIViewHelpers (6.0.1):
     - LayoutTestBase/Config
+  - SnapKit (5.0.1)
   - SnapshotTesting (1.7.2)
 
 DEPENDENCIES:
   - CoreTesting (from `../`)
   - LayoutTest/Swift (~> 6.0.1)
+  - SnapKit
   - SnapshotTesting (~> 1.7.2)
 
 SPEC REPOS:
   trunk:
     - LayoutTest
     - LayoutTestBase
+    - SnapKit
     - SnapshotTesting
 
 EXTERNAL SOURCES:
@@ -45,11 +48,12 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  CoreTesting: 65ce5d56155862b58b099f9a62380c688000dcc5
+  CoreTesting: 7ec43d66b3eabb3ad121a885b778f28ace10773c
   LayoutTest: f05ff965f6a090fd00f289d0f52fa12b502388fa
   LayoutTestBase: e087799bca531a58f5e8070cde036fb6185a76fa
+  SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   SnapshotTesting: 8caa6661fea7c8019d5b46de77c16bab99c36c5c
 
-PODFILE CHECKSUM: d1d723392455321b6802e17a24b8c4c50f71be57
+PODFILE CHECKSUM: 11799ad2b00779a916104e4c0ca3bda271b889ed
 
 COCOAPODS: 1.9.1

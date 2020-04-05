@@ -1,6 +1,6 @@
 import UIKit
 
-final class SnapshotContainer<View: UIView>: UIView {
+public final class SnapshotContainer<View: UIView>: UIView {
     let view: View
 
     public init(_ view: View, width: CGFloat? = nil, height: CGFloat? = nil) {

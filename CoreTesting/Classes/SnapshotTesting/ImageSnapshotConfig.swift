@@ -21,6 +21,8 @@ public struct ImageSnapshotConfig {
         self.viewImageConfig = newViewImageConfig
     }
 
+    // MARK: Public methods
+    
     static func fixed(
         _ fixedSize: FixedSize,
         userInterfaceStyle: UIUserInterfaceStyle,
@@ -37,33 +39,42 @@ public struct ImageSnapshotConfig {
     }
 
     static func iPhoneSe(userInterfaceStyle: UIUserInterfaceStyle, preferredContentSizeCategory: UIContentSizeCategory) -> ImageSnapshotConfig {
-        let viewImageConfig: ViewImageConfig = .iPhoneSe
-        return fixed(
-            .width(viewImageConfig.size!.width),
+        return fixedWidth(.iPhoneSe,
             userInterfaceStyle: userInterfaceStyle,
             preferredContentSizeCategory: preferredContentSizeCategory
         )        
     }
 
     static func iPhone8(userInterfaceStyle: UIUserInterfaceStyle, preferredContentSizeCategory: UIContentSizeCategory) -> ImageSnapshotConfig {
-        ImageSnapshotConfig(
-            viewImageConfig: .iPhone8,
+        return fixedWidth(.iPhone8,
             userInterfaceStyle: userInterfaceStyle,
             preferredContentSizeCategory: preferredContentSizeCategory
         )
     }
 
     static func iPhone8Plus(userInterfaceStyle: UIUserInterfaceStyle, preferredContentSizeCategory: UIContentSizeCategory) -> ImageSnapshotConfig {
-        ImageSnapshotConfig(
-            viewImageConfig: .iPhone8Plus,
+        return fixedWidth(.iPhone8Plus,
             userInterfaceStyle: userInterfaceStyle,
             preferredContentSizeCategory: preferredContentSizeCategory
         )
     }
     
     static func iPhoneX(userInterfaceStyle: UIUserInterfaceStyle, preferredContentSizeCategory: UIContentSizeCategory) -> ImageSnapshotConfig {
-        ImageSnapshotConfig(
-            viewImageConfig: .iPhoneX,
+        return fixedWidth(.iPhoneX,
+            userInterfaceStyle: userInterfaceStyle,
+            preferredContentSizeCategory: preferredContentSizeCategory
+        )
+    }
+    
+    // MARK: Private methods
+    
+    private static func fixedWidth(
+        _ viewImageConfig: ViewImageConfig,
+        userInterfaceStyle: UIUserInterfaceStyle,
+        preferredContentSizeCategory: UIContentSizeCategory
+    ) -> ImageSnapshotConfig {
+        return fixed(
+            .width(viewImageConfig.size!.width),
             userInterfaceStyle: userInterfaceStyle,
             preferredContentSizeCategory: preferredContentSizeCategory
         )

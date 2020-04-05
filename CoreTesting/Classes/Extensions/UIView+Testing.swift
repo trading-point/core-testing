@@ -3,6 +3,7 @@ import UIKit
 extension UIView {
     public func visuallyDebugLayout() {
         var index = 0
+        backgroundColor = .white
         visuallyDebugLayout(&index)
     }
 
@@ -23,11 +24,10 @@ extension UIView {
 
             if let label = view as? UILabel {
                 label.textColor = .black
-                // increase the text by x4
+                // increase the text by x2
                 if let text = label.text {                    
-                    label.text = (1...4).reduce("") { (result, _) -> String in
-                        return result + " " + text
-                    }
+                    //let increasedLengthText = (1...2).map { _ in text }.joined(separator: " ")
+                    label.text = text + " " + text
                 }
             }
             if view.subviews.count > 0 {

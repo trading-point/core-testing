@@ -18,15 +18,30 @@ public func assertImageSnapshot(
     line: UInt = #line
 ) {
     let viewImageConfig = config.viewImageConfig
-    let width = config.fixedSize?.width
-    let height = config.fixedSize?.height
-    let container = SnapshotContainer(view(), width: width, height: height)
+    let width: CGFloat? = config.fixedSize?.width
+    let height: CGFloat? = config.fixedSize?.height
+    
+    let v = view()
+    let size: CGSize
+    switch (width, height) {
+    case let (.some(w), .some(h)):
+        size = CGSize(width: w, height: h)
+    case let (.some(w), .none):
+        let targetSize = CGSize(width: w, height: UIView.layoutFittingCompressedSize.height)
+        size = v.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
+    case let (.none, .some(h)):
+        let targetSize = CGSize(width: UIView.layoutFittingCompressedSize.width, height: h)
+        size = v.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .fittingSizeLevel, verticalFittingPriority: .required)
+    case (.none, .none):
+        let targetSize = CGSize(width: UIView.layoutFittingCompressedSize.width, height: UIView.layoutFittingCompressedSize.height)
+        size = v.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .fittingSizeLevel, verticalFittingPriority: .fittingSizeLevel)
+    }
 
     diffTool = SnapshotTestConfig.diffTool
 
     assertSnapshot(
-        matching: container,
-        as: .image(traits: viewImageConfig.traits),
+        matching: v,
+        as: .image(size: size, traits: viewImageConfig.traits),
         named: name,
         record: recording || SnapshotTestConfig.record,
         timeout: timeout,

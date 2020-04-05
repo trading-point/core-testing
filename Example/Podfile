@@ -1,7 +1,7 @@
 use_frameworks!
 
 target 'CoreTesting_Example' do
-  
+  pod 'SnapKit'
 
   target 'CoreTesting_Tests' do
     inherit! :search_paths
