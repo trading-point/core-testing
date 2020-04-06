@@ -144,6 +144,14 @@ public enum SnapshotTestConfig {
                        preferredContentSizeCategory: .large)
             )
         }
+        
+        public static func free(testing: (ImageSnapshotConfig) -> Void) {
+            testing(
+                .fixed(nil,
+                userInterfaceStyle: .light,
+                preferredContentSizeCategory: .large)
+            )
+        }
     }
 
     // config generation for view controllers

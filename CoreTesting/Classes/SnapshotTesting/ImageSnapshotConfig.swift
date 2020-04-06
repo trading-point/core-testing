@@ -24,7 +24,7 @@ public struct ImageSnapshotConfig {
     // MARK: Public methods
     
     static func fixed(
-        _ fixedSize: FixedSize,
+        _ fixedSize: FixedSize?,
         userInterfaceStyle: UIUserInterfaceStyle,
         preferredContentSizeCategory: UIContentSizeCategory
     ) -> ImageSnapshotConfig {
