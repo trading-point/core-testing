@@ -22,7 +22,7 @@ public func assertImageSnapshot(
     let height: CGFloat? = config.fixedSize?.height
     
     let v = view()
-    let size: CGSize
+    var size: CGSize
     switch (width, height) {
     case let (.some(w), .some(h)):
         size = CGSize(width: w, height: h)
@@ -36,6 +36,8 @@ public func assertImageSnapshot(
         let targetSize = CGSize(width: UIView.layoutFittingCompressedSize.width, height: UIView.layoutFittingCompressedSize.height)
         size = v.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .fittingSizeLevel, verticalFittingPriority: .fittingSizeLevel)
     }
+    size.width = ceil(size.width)
+    size.height = ceil(size.height)
 
     diffTool = SnapshotTestConfig.diffTool
 
