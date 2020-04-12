@@ -13,7 +13,6 @@ public struct ImageSnapshotConfig {
         var newViewImageConfig = viewImageConfig
         newViewImageConfig.traits = UITraitCollection(traitsFrom: [
             viewImageConfig.traits,
-            UITraitCollection(displayScale: 2.0),
             UITraitCollection(userInterfaceStyle: userInterfaceStyle),
             UITraitCollection(preferredContentSizeCategory: preferredContentSizeCategory),
         ])
