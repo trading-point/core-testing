@@ -1,7 +1,7 @@
-import SnapKit
 import UIKit
+import SnapKit
 
-final class DocumentHistoryCell: UITableViewCell {
+public final class DocumentHistoryCell: UITableViewCell {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -141,26 +141,13 @@ final class DocumentHistoryCell: UITableViewCell {
     }
 }
 
+// MARK: - ViewState
+
 extension DocumentHistoryCell {
     struct ViewState {
         let title: String
         let subtitle: String
         let status: Status
-
-        init(title: String, subtitle: String, type: Type) {
-            self.title = title
-            self.subtitle = subtitle
-            self.status = Status.make(from: type)
-        }
-    }
-}
-
-extension DocumentHistoryCell.ViewState {
-    enum `Type` {
-        case received
-        case clarify
-        case validated
-        case rejected
     }
 }
 
@@ -170,42 +157,54 @@ extension DocumentHistoryCell.ViewState {
         let textColor: UIColor
         let backgroundColor: UIColor
 
-        private init(text: String, textColor: UIColor, backgroundColor: UIColor) {
+        init(text: String, textColor: UIColor, backgroundColor: UIColor) {
             self.text = text
             self.textColor = textColor
             self.backgroundColor = backgroundColor
         }
+    }
+}
 
-        static func make(from type: Type) -> Status {
-            switch type {
-            case .received:
-                return Status(
-                    text: "Received",
-                    textColor: .black,
-                    backgroundColor: .green
-                )
-            case .clarify:
-                return Status(
-                    text: "Clarify",
-                    textColor: .white,
-                    backgroundColor: .orange
-                )
-            case .validated:
-                return Status(
-                    text: "Validated",
-                    textColor: .white,
-                    backgroundColor: .green
-                )
-            case .rejected:
-                return Status(
-                    text: "Rejected",
-                    textColor: .white,
-                    backgroundColor: .red
-                )
-            }
+// MARK: - Domain login
+
+extension DocumentHistoryCell.ViewState {
+    static func makeWith(document: Document) -> DocumentHistoryCell.ViewState {
+        Self(title: document.title, subtitle: document.subtitle, status: .make(from: document.type))
+    }
+}
+
+extension DocumentHistoryCell.ViewState.Status {
+    static func make(from type: Document.`Type`) -> DocumentHistoryCell.ViewState.Status {
+        switch type {
+        case .received:
+            return DocumentHistoryCell.ViewState.Status(
+                text: "Received",
+                textColor: .black,
+                backgroundColor: .green
+            )
+        case .clarify:
+            return DocumentHistoryCell.ViewState.Status(
+                text: "Clarify",
+                textColor: .white,
+                backgroundColor: .orange
+            )
+        case .validated:
+            return DocumentHistoryCell.ViewState.Status(
+                text: "Validated",
+                textColor: .white,
+                backgroundColor: .green
+            )
+        case .rejected:
+            return DocumentHistoryCell.ViewState.Status(
+                text: "Rejected",
+                textColor: .white,
+                backgroundColor: .red
+            )
         }
     }
 }
+
+// MARK: - Constants
 
 extension DocumentHistoryCell {
     enum Dimensions {

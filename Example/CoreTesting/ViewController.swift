@@ -42,7 +42,7 @@ extension ViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "DocumentHistoryCell", for: indexPath) as! DocumentHistoryCell
-        let viewState = DocumentHistoryCell.ViewState(title: "My driving license", subtitle: "Nov 20, 2019 at 13:30, JPG", type: .rejected)
+        let viewState = DocumentHistoryCell.ViewState(title: "My driving license", subtitle: "Nov 20, 2019 at 13:30, JPG", status: .make(from: .rejected))
         cell.update(with: viewState)
         return cell
     }
