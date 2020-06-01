@@ -5,7 +5,7 @@ final class DocumentHistoryCell: UITableViewCell {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 18.0)
+        label.font = .preferredFont(forTextStyle: .title1)
         label.adjustsFontForContentSizeCategory = true
         label.numberOfLines = 0
         label.textColor = .black
@@ -15,7 +15,7 @@ final class DocumentHistoryCell: UITableViewCell {
     private let subtitleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 13.0)
+        label.font = .preferredFont(forTextStyle: .title3)
         label.adjustsFontForContentSizeCategory = true
         label.numberOfLines = 0
         label.textColor = .gray
@@ -43,7 +43,7 @@ final class DocumentHistoryCell: UITableViewCell {
     private let statusLabel: PaddedLabel = {
         let label = PaddedLabel(horizontal: Dimensions.StatusLabel.horizontalMargin, vertical: Dimensions.StatusLabel.verticalMargin)
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 13.0)
+        label.font = .preferredFont(forTextStyle: .caption1)
         label.adjustsFontForContentSizeCategory = true
         label.layer.masksToBounds = true
         label.layer.cornerRadius = 10.0

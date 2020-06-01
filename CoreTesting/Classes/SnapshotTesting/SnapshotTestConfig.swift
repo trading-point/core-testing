@@ -1,12 +1,54 @@
 import SnapshotTesting
 import UIKit
 
+private func fittingSize(forView view: UIView, traits: UITraitCollection, width: CGFloat?, height: CGFloat?) -> CGSize {
+    let viewController = UIViewController()
+    viewController.view.addSubview(view)
+    
+    let rootViewController = UIViewController()
+    rootViewController.addChild(viewController)
+    viewController.view.frame = rootViewController.view.frame
+    rootViewController.view.addSubview(viewController.view)
+
+    let window: UIWindow = .init()
+    window.isHidden = false
+    
+    rootViewController.setOverrideTraitCollection(traits, forChild: viewController)
+    viewController.didMove(toParent: rootViewController)
+    window.rootViewController = rootViewController
+
+    rootViewController.beginAppearanceTransition(true, animated: false)
+    rootViewController.endAppearanceTransition()
+
+    rootViewController.view.setNeedsLayout()
+    rootViewController.view.layoutIfNeeded()
+    
+    var size: CGSize = {
+        switch (width, height) {
+        case let (.some(w), .some(h)):
+            return CGSize(width: w, height: h)
+        case let (.some(w), .none):
+            let targetSize = CGSize(width: w, height: UIView.layoutFittingCompressedSize.height)
+            return view.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
+        case let (.none, .some(h)):
+            let targetSize = CGSize(width: UIView.layoutFittingCompressedSize.width, height: h)
+            return view.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .fittingSizeLevel, verticalFittingPriority: .required)
+        case (.none, .none):
+            let targetSize = CGSize(width: UIView.layoutFittingCompressedSize.width, height: UIView.layoutFittingCompressedSize.height)
+            return view.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .fittingSizeLevel, verticalFittingPriority: .fittingSizeLevel)
+        }
+    }()
+    size.width = ceil(size.width)
+    size.height = ceil(size.height)
+    
+    return size
+}
+
 /**
  Runs the snapshot test for the provided view and configuration
 
  Will fail with a "zero size" assertion if size cannot be determined.
 */
-
 public func assertImageSnapshot(
     matching view: @autoclosure () -> UIView,
     config: ImageSnapshotConfig,
@@ -21,24 +63,16 @@ public func assertImageSnapshot(
     let width: CGFloat? = config.fixedSize?.width
     let height: CGFloat? = config.fixedSize?.height
     
-    let v = view()
-    var size: CGSize
-    switch (width, height) {
-    case let (.some(w), .some(h)):
-        size = CGSize(width: w, height: h)
-    case let (.some(w), .none):
-        let targetSize = CGSize(width: w, height: UIView.layoutFittingCompressedSize.height)
-        size = v.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
-    case let (.none, .some(h)):
-        let targetSize = CGSize(width: UIView.layoutFittingCompressedSize.width, height: h)
-        size = v.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .fittingSizeLevel, verticalFittingPriority: .required)
-    case (.none, .none):
-        let targetSize = CGSize(width: UIView.layoutFittingCompressedSize.width, height: UIView.layoutFittingCompressedSize.height)
-        size = v.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .fittingSizeLevel, verticalFittingPriority: .fittingSizeLevel)
-    }
-    size.width = ceil(size.width)
-    size.height = ceil(size.height)
-
+    let v: UIView = {
+        switch (width, height) {
+        case (.none, .none):
+            return SnapshotContainer(view())
+        default:
+            return view()
+        }
+    }()    
+    let size = fittingSize(forView: v, traits: viewImageConfig.traits, width: width, height: height)
+    
     diffTool = SnapshotTestConfig.diffTool
 
     assertSnapshot(
@@ -75,7 +109,7 @@ public enum SnapshotTestConfig {
         */
         public static func small(testing: (ImageSnapshotConfig) -> Void) {
             testing(
-                .iPhoneX(
+                .iPhoneSe(
                     userInterfaceStyle: .light,
                     preferredContentSizeCategory: .large
                 )
@@ -99,13 +133,13 @@ public enum SnapshotTestConfig {
         */
         public static func all(testing: (ImageSnapshotConfig) -> Void) {
             let configs: [ImageSnapshotConfig] = [
-                .iPhoneX(
-                    userInterfaceStyle: .light,
-                    preferredContentSizeCategory: .large
-                ),
                 .iPhoneSe(
+                    userInterfaceStyle: .light,
+                    preferredContentSizeCategory: .extraExtraExtraLarge
+                ),
+                .iPhone8Plus(
                     userInterfaceStyle: .dark,
-                    preferredContentSizeCategory: .large
+                    preferredContentSizeCategory: .extraSmall
                 ),
             ]
             combos(configs: configs, testing: testing)
