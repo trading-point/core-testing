@@ -1,127 +1,22 @@
 import SnapshotTesting
 import UIKit
 
-private func fittingSize(forView view: UIView, traits: UITraitCollection, width: CGFloat?, height: CGFloat?) -> CGSize {
-    let viewController = UIViewController()
-    viewController.view.addSubview(view)
-    
-    let rootViewController = UIViewController()
-    rootViewController.addChild(viewController)
-    viewController.view.frame = rootViewController.view.frame
-    rootViewController.view.addSubview(viewController.view)
-
-    let window: UIWindow = .init()
-    window.isHidden = false
-    
-    rootViewController.setOverrideTraitCollection(traits, forChild: viewController)
-    viewController.didMove(toParent: rootViewController)
-    window.rootViewController = rootViewController
-
-    rootViewController.beginAppearanceTransition(true, animated: false)
-    rootViewController.endAppearanceTransition()
-
-    rootViewController.view.setNeedsLayout()
-    rootViewController.view.layoutIfNeeded()
-    
-    var size: CGSize = {
-        switch (width, height) {
-        case let (.some(w), .some(h)):
-            return CGSize(width: w, height: h)
-        case let (.some(w), .none):
-            let targetSize = CGSize(width: w, height: UIView.layoutFittingCompressedSize.height)
-            return view.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
-        case let (.none, .some(h)):
-            let targetSize = CGSize(width: UIView.layoutFittingCompressedSize.width, height: h)
-            return view.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .fittingSizeLevel, verticalFittingPriority: .required)
-        case (.none, .none):
-            let targetSize = CGSize(width: UIView.layoutFittingCompressedSize.width, height: UIView.layoutFittingCompressedSize.height)
-            return view.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .fittingSizeLevel, verticalFittingPriority: .fittingSizeLevel)
-        }
-    }()
-    size.width = ceil(size.width)
-    size.height = ceil(size.height)
-    
-    return size
-}
-
-/**
- Runs the snapshot test for the provided view and configuration
-
- Will fail with a "zero size" assertion if size cannot be determined.
-*/
-public func assertImageSnapshot(
-    matching view: @autoclosure () -> UIView,
-    config: ImageSnapshotConfig,
-    named name: String? = nil,
-    record recording: Bool = false,
-    timeout: TimeInterval = 5,
-    file: StaticString = #file,
-    testName: String = #function,
-    line: UInt = #line
-) {
-    let viewImageConfig = config.viewImageConfig
-    let width: CGFloat? = config.fixedSize?.width
-    let height: CGFloat? = config.fixedSize?.height
-    
-    let v: UIView = {
-        switch (width, height) {
-        case (.none, .none):
-            return SnapshotContainer(view())
-        default:
-            return view()
-        }
-    }()    
-    let size = fittingSize(forView: v, traits: viewImageConfig.traits, width: width, height: height)
-    
-    diffTool = SnapshotTestConfig.diffTool
-
-    assertSnapshot(
-        matching: v,
-        as: .image(size: size, traits: viewImageConfig.traits),
-        named: name,
-        record: recording || SnapshotTestConfig.record,
-        timeout: timeout,
-        file: file,
-        testName: testName,
-        line: line
-    )
-}
-
-public func assertImageSnapshot(
-    matching vc: UIViewController,
-    config: ViewImageConfig,
-    named name: String? = nil,
-    record recording: Bool = false,
-    timeout: TimeInterval = 5,
-    file: StaticString = #file,
-    testName: String = #function,
-    line: UInt = #line
-) {
-    diffTool = SnapshotTestConfig.diffTool
-
-    assertSnapshot(
-        matching: vc,
-        as: .image(on: config),
-        named: name,
-        record: recording || SnapshotTestConfig.record,
-        timeout: timeout,
-        file: file,
-        testName: testName,
-        line: line
-    )
-}
-
 public enum SnapshotTestConfig {
     public static var record = false
     public static var diffTool: String? = "ksdiff"
+}
 
-    
-    public enum View {
+// MARK: Views
+
+public extension SnapshotTestConfig {
+    enum View {
         /**
-         Used to test how the view looks like in **small width phones**.
+         Used to test how the view looks like in a **single (fixed width, dynamic height) phone**
+         for a specific domain case. Not interested in how the view behaves under extreme device
+         configurations.
          
-         Generates one single iPhoneSe size configuration (iPhoneX
-         for WorkCo) with **fixed width and flexible height**.
+         Usually used when the view has already been tested how it looks like
+         in another test using **all** devices configurations
          
          ~~~
          SnapshotTestConfig.View.small { config in
@@ -131,20 +26,17 @@ public enum SnapshotTestConfig {
 
         - Parameter testing: The closure that returns the configuration to be tested.
         */
-        public static func small(testing: (ImageSnapshotConfig) -> Void) {
-            testing(
-                .iPhoneSe(
-                    userInterfaceStyle: .light,
-                    preferredContentSizeCategory: .large
-                )
+        public static func single(testing: (ImageSnapshotConfig) -> Void) {
+            let config = ImageSnapshotConfig.iPhoneSe(
+                userInterfaceStyle: .light,
+                preferredContentSizeCategory: .large
             )
+            combos(configs: config, testing: testing)
         }
 
         /**
-         Used to test how the view looks like in **small and large width phones**.
-         
-         Generates two size configurations (one for iPhoneSe and one for iPhone8Plus
-         (iPhoneX and iPhoneSe for WorkCo) with **fixed width and flexible height**.
+         Used to test how the view looks like in **(fixed small and large width, dynamic height) phones**.
+         Every view should include at least one such test.
          
          ~~~
          SnapshotTestConfig.View.all { config in
@@ -153,33 +45,23 @@ public enum SnapshotTestConfig {
          ~~~
 
         - Parameter testing: The closure that returns the configurations to be tested.
-         Called twice, once per configuration returned.
         */
         public static func all(testing: (ImageSnapshotConfig) -> Void) {
-            let configs: [ImageSnapshotConfig] = [
-                .iPhoneSe(
-                    userInterfaceStyle: .light,
-                    preferredContentSizeCategory: .extraExtraExtraLarge
-                ),
-                .iPhone8Plus(
-                    userInterfaceStyle: .dark,
-                    preferredContentSizeCategory: .extraSmall
-                ),
-            ]
-            combos(configs: configs, testing: testing)
+            let small = ImageSnapshotConfig.iPhoneSe(
+                userInterfaceStyle: .light,
+                preferredContentSizeCategory: .extraExtraExtraLarge
+            )
+            let large = ImageSnapshotConfig.iPhone8Plus(
+                userInterfaceStyle: .dark,
+                preferredContentSizeCategory: .extraSmall
+            )
+            combos(configs: small, large, testing: testing)
         }
-
-        static func combos(configs: [ImageSnapshotConfig], testing: (ImageSnapshotConfig) -> Void) {
-            configs.forEach { config in
-                testing(config)
-            }
-        }
-
+        
+        
         /**
-         Used to test how the view looks like in **custom fixed size**.
-         
-         Generates one single size configuration with either **fixed width
-         and flexible height** or **fixed width and height**.
+         Used to test how the view looks like in **custom fixed size** configuration,
+         either **(fixed width, dynamic height)** or **(fixed width, fixed height)**.
          
          ~~~
          SnapshotTestConfig.View.fixed(.width(200)) { config in
@@ -198,37 +80,56 @@ public enum SnapshotTestConfig {
         - Parameter testing: The closure that returns the configurations to be tested.
         */
         public static func fixed(_ fixedSize: ImageSnapshotConfig.FixedSize, testing: (ImageSnapshotConfig) -> Void) {
-            testing(
-                .fixed(fixedSize,
-                       userInterfaceStyle: .light,
-                       preferredContentSizeCategory: .large)
-            )
-        }
-        
-        public static func free(testing: (ImageSnapshotConfig) -> Void) {
-            testing(
-                .fixed(nil,
+            let small = ImageSnapshotConfig.fixed(
+                fixedSize,
                 userInterfaceStyle: .light,
-                preferredContentSizeCategory: .large)
+                preferredContentSizeCategory: .extraExtraExtraLarge
             )
+            let large = ImageSnapshotConfig.fixed(
+                fixedSize,
+                userInterfaceStyle: .dark,
+                preferredContentSizeCategory: .extraSmall
+            )
+            combos(configs: small, large, testing: testing)
         }
-    }
+        
+        
+        /**
+         Used to test how the view looks like for dynamic width and height.
 
-    // config generation for view controllers
-    public enum VC {
-        public static func small(testing: (ViewImageConfig) -> Void) {
-            configs(configs: .small, testing: testing)
+        - Parameter testing: The closure that returns the configurations to be tested.
+         */
+        public static func free(testing: (ImageSnapshotConfig) -> Void) {
+            let small = ImageSnapshotConfig.fixed(
+                nil,
+                userInterfaceStyle: .light,
+                preferredContentSizeCategory: .extraExtraExtraLarge
+            )
+            let large = ImageSnapshotConfig.fixed(
+                nil,
+                userInterfaceStyle: .dark,
+                preferredContentSizeCategory: .extraSmall
+            )
+            combos(configs: small, large, testing: testing)
         }
         
-        public static func large(testing: (ViewImageConfig) -> Void) {
-            configs(configs: .large, testing: testing)
+
+        /**
+         Used to test how the view looks like in the provided configurations.
+
+        - Parameter testing: The closure that returns the configurations to be tested.
+         */
+        public static func combos(configs: ImageSnapshotConfig..., testing: (ImageSnapshotConfig) -> Void) {
+            combos(configs: configs, testing: testing)
         }
         
-        public static func all(testing: (ViewImageConfig) -> Void) {
-            configs(configs: .small, .large, testing: testing)
-        }
         
-        public static func configs(configs: ViewImageConfig..., testing: (ViewImageConfig) -> Void) {
+        /**
+         Used to test how the view looks like in the provided configurations.
+
+        - Parameter testing: The closure that returns the configurations to be tested.
+         */
+        public static func combos(configs: [ImageSnapshotConfig], testing: (ImageSnapshotConfig) -> Void) {
             configs.forEach { config in
                 testing(config)
             }
@@ -236,6 +137,66 @@ public enum SnapshotTestConfig {
     }
 }
 
+// MARK: View controllers
+
+public extension SnapshotTestConfig {
+    // config generation for view controllers
+    enum VC {
+        /**
+         Used to test how a VC looks like in a **single width phone (iPhoneSE)** configuration
+         for a specific domain case. Not interested in how the VC behaves under extreme device
+         configurations.
+         
+         Usually used when the VC has already been tested how it looks like
+         in another test using **all** devices configurations.
+         
+         ~~~
+         SnapshotTestConfig.VC.small { config in
+             assertImageSnapshot(matching: vc, config: config)
+         }
+         ~~~
+
+        - Parameter testing: The closure that returns the configuration to be tested.
+        */
+        public static func single(testing: (ViewImageConfig) -> Void) {
+            var config: ViewImageConfig = .iPhoneSe
+            config.traits = UITraitCollection(traitsFrom: [
+                config.traits,
+                .init(preferredContentSizeCategory:.large)
+            ])
+            combos(configs: config, testing: testing)
+        }
+        
+        
+        /**
+         Used to test how a VC looks like in **small (iPhoneSe) and large width (iPhone8Plus) phone**
+         configurations. Every VC should include at least one such test.
+         
+         ~~~
+         SnapshotTestConfig.VC.all { config in
+             assertImageSnapshot(matching: vc, config: config)
+         }
+         ~~~
+
+        - Parameter testing: The closure that returns the configurations to be tested.
+        */
+        public static func all(testing: (ViewImageConfig) -> Void) {
+            combos(configs: .small, .large, testing: testing)
+        }
+        
+        
+        /**
+         Used to test how a VC looks like in the provided configurations.
+
+        - Parameter testing: The closure that returns the configurations to be tested.
+         */
+        public static func combos(configs: ViewImageConfig..., testing: (ViewImageConfig) -> Void) {
+            configs.forEach { config in
+                testing(config)
+            }
+        }
+    }
+}
 
 public extension ViewImageConfig {
     static let small: ViewImageConfig = {
