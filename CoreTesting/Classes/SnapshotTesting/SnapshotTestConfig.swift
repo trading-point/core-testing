@@ -87,6 +87,30 @@ public func assertImageSnapshot(
     )
 }
 
+public func assertImageSnapshot(
+    matching vc: UIViewController,
+    config: ViewImageConfig,
+    named name: String? = nil,
+    record recording: Bool = false,
+    timeout: TimeInterval = 5,
+    file: StaticString = #file,
+    testName: String = #function,
+    line: UInt = #line
+) {
+    diffTool = SnapshotTestConfig.diffTool
+
+    assertSnapshot(
+        matching: vc,
+        as: .image(on: config),
+        named: name,
+        record: recording || SnapshotTestConfig.record,
+        timeout: timeout,
+        file: file,
+        testName: testName,
+        line: line
+    )
+}
+
 public enum SnapshotTestConfig {
     public static var record = false
     public static var diffTool: String? = "ksdiff"
@@ -191,25 +215,44 @@ public enum SnapshotTestConfig {
     }
 
     // config generation for view controllers
-//    enum VC {
-//        static internal func basic(testing: (Device, Theme) -> Void) {
-//            testing(.phone4inch, .light)
-//        }
-//
-//        static internal func all(testing: (Device, Theme) -> Void) {
-//            let combosLightTheme = combos([Device.phone4inch, Device.phone4_7inch], [Theme.light])
-//            let combosDarkTheme = combos([Device.phone5_8inch, Device.pad], [Theme.dark])
-//            let combosForViewControllerSnapshots = combosDarkTheme + combosLightTheme
-//            combosForViewControllerSnapshots.forEach { (device, theme) in
-//                testing(device, theme)
-//            }
-//        }
-//
-//        static internal func allPhoneWidths(testing: (Device, Theme) -> Void) {
-//            let combosForSizes = combos([Device.phone4inch, Device.phone4_7inch, Device.phone5_5inch], [Theme.light])
-//            combosForSizes.forEach { (device, theme) in
-//                testing(device, theme)
-//            }
-//        }
-//    }
+    public enum VC {
+        public static func small(testing: (ViewImageConfig) -> Void) {
+            configs(configs: .small, testing: testing)
+        }
+        
+        public static func large(testing: (ViewImageConfig) -> Void) {
+            configs(configs: .large, testing: testing)
+        }
+        
+        public static func all(testing: (ViewImageConfig) -> Void) {
+            configs(configs: .small, .large, testing: testing)
+        }
+        
+        public static func configs(configs: ViewImageConfig..., testing: (ViewImageConfig) -> Void) {
+            configs.forEach { config in
+                testing(config)
+            }
+        }
+    }
+}
+
+
+public extension ViewImageConfig {
+    static let small: ViewImageConfig = {
+        var config: ViewImageConfig = .iPhoneSe
+        config.traits = UITraitCollection(traitsFrom: [
+            config.traits,
+            .init(preferredContentSizeCategory:.extraExtraExtraLarge)
+        ])
+        return config
+    }()
+    
+    static let large: ViewImageConfig = {
+        var config: ViewImageConfig = .iPhone8Plus
+        config.traits = UITraitCollection(traitsFrom: [
+            config.traits,
+            .init(preferredContentSizeCategory: .large)
+        ])
+        return config
+    }()
 }

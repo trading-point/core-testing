@@ -17,6 +17,9 @@
 		5EF40B4824850C3500B030E1 /* Document.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF40B4624850C3500B030E1 /* Document.swift */; };
 		5EF40B4D248522BD00B030E1 /* DocumentHistoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF40B4C248522BD00B030E1 /* DocumentHistoryCell.swift */; };
 		5EF40B4E248522BD00B030E1 /* DocumentHistoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF40B4C248522BD00B030E1 /* DocumentHistoryCell.swift */; };
+		5EF40B502485317100B030E1 /* DocumentHistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF40B4F2485317100B030E1 /* DocumentHistoryViewController.swift */; };
+		5EF40B512485317100B030E1 /* DocumentHistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF40B4F2485317100B030E1 /* DocumentHistoryViewController.swift */; };
+		5EF40B57248531F400B030E1 /* DocumentHistoryViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF40B55248531F400B030E1 /* DocumentHistoryViewControllerTests.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
@@ -46,6 +49,8 @@
 		5EF40B432484FAF000B030E1 /* PaddedLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaddedLabel.swift; sourceTree = "<group>"; };
 		5EF40B4624850C3500B030E1 /* Document.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Document.swift; sourceTree = "<group>"; };
 		5EF40B4C248522BD00B030E1 /* DocumentHistoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentHistoryCell.swift; sourceTree = "<group>"; };
+		5EF40B4F2485317100B030E1 /* DocumentHistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentHistoryViewController.swift; sourceTree = "<group>"; };
+		5EF40B55248531F400B030E1 /* DocumentHistoryViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentHistoryViewControllerTests.swift; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* CoreTesting_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoreTesting_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -119,6 +124,8 @@
 				5EE5CC2B2437736D00645833 /* DocumentHistoryCellTests.swift */,
 				5EF40B432484FAF000B030E1 /* PaddedLabel.swift */,
 				5EF40B4624850C3500B030E1 /* Document.swift */,
+				5EF40B4F2485317100B030E1 /* DocumentHistoryViewController.swift */,
+				5EF40B55248531F400B030E1 /* DocumentHistoryViewControllerTests.swift */,
 			);
 			path = DocumentHistory;
 			sourceTree = "<group>";
@@ -394,6 +401,7 @@
 				5EF40B4D248522BD00B030E1 /* DocumentHistoryCell.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 				5EF40B4724850C3500B030E1 /* Document.swift in Sources */,
+				5EF40B502485317100B030E1 /* DocumentHistoryViewController.swift in Sources */,
 				5EA4CD7E248150640015FCAA /* SupportButton.swift in Sources */,
 				5EF40B442484FAF000B030E1 /* PaddedLabel.swift in Sources */,
 			);
@@ -407,7 +415,9 @@
 				5EA4CD812481537F0015FCAA /* SupportButton.swift in Sources */,
 				5EF40B4824850C3500B030E1 /* Document.swift in Sources */,
 				5EA4CD80248152840015FCAA /* SupportButtonTests.swift in Sources */,
+				5EF40B512485317100B030E1 /* DocumentHistoryViewController.swift in Sources */,
 				5EF40B452484FB0700B030E1 /* PaddedLabel.swift in Sources */,
+				5EF40B57248531F400B030E1 /* DocumentHistoryViewControllerTests.swift in Sources */,
 				5EE5CC3F24377F9900645833 /* DocumentHistoryCellTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -8,7 +8,6 @@
 
 import XCTest
 import CoreTesting
-@testable import CoreTesting_Example
 
 class SupportButtonTests: XCTestCase {
     func testSupportButton() {
