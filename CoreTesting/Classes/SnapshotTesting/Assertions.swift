@@ -29,10 +29,14 @@ private func fittingSize(forView view: UIView, traits: UITraitCollection, width:
             return CGSize(width: w, height: h)
         case let (.some(w), .none):
             let targetSize = CGSize(width: w, height: UIView.layoutFittingCompressedSize.height)
-            return view.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
+            let calculatedSize = view.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
+            assert(calculatedSize.width == w, "The width calculated by the layout system is not equal to the one that was passed to it. Please check that your height constraints are set properly")
+            return calculatedSize
         case let (.none, .some(h)):
             let targetSize = CGSize(width: UIView.layoutFittingCompressedSize.width, height: h)
-            return view.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .fittingSizeLevel, verticalFittingPriority: .required)
+            let calculatedSize = view.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .fittingSizeLevel, verticalFittingPriority: .required)
+            assert(calculatedSize.height == h, "The height calculated by the layout system is not equal to the one that was passed to it. Please check that your width constraints are set properly")
+            return calculatedSize
         case (.none, .none):
             let targetSize = CGSize(width: UIView.layoutFittingCompressedSize.width, height: UIView.layoutFittingCompressedSize.height)
             return view.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .fittingSizeLevel, verticalFittingPriority: .fittingSizeLevel)
