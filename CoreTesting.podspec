@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'CoreTesting'
-  s.version          = '0.1.1'
+  s.version          = '0.1.5'
   s.summary          = 'Testing framework that includes helpers and utils for writing iOS tests.'
   
   if s.respond_to?(:swift_versions) then
