@@ -12,8 +12,7 @@ import CoreTesting
 class SupportButtonTests: XCTestCase {
     func testSupportButton() {
         let button = SupportButton()
-
-        SnapshotTestConfig.View.free { config in
+        SnapshotTestConfig.View.free { config in            
             assertImageSnapshot(matching: button, config: config)
         }
     }

@@ -3,6 +3,12 @@ import CoreTesting
 
 class DocumentHistoryViewControllerTests: XCTestCase {
 
+    override func setUp() {
+        super.setUp()
+
+//        SnapshotTestConfig.record = true
+    }
+    
     func testAllCellDomainCases() throws {
         let cases: [Document.`Type`] = [
             .received,
