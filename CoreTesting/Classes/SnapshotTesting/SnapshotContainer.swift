@@ -1,16 +1,14 @@
 import UIKit
 
 public final class SnapshotContainer<View: UIView>: UIView {
-    let view: View
 
     public init(_ view: View, width: CGFloat? = nil, height: CGFloat? = nil) {
-        self.view = view
-
         super.init(frame: .zero)
 
         translatesAutoresizingMaskIntoConstraints = false
         view.translatesAutoresizingMaskIntoConstraints = false
 
+        view.removeFromSuperview()
         addSubview(view)
 
         NSLayoutConstraint.activate([
@@ -19,15 +17,15 @@ public final class SnapshotContainer<View: UIView>: UIView {
             view.leadingAnchor.constraint(equalTo: leadingAnchor),
             view.trailingAnchor.constraint(equalTo: trailingAnchor),
         ])
-
-        // remove any old size constraints
-        let sizeConstraints = view.constraints.filter { $0.firstAttribute == .width || $0.firstAttribute == .height }
-        view.removeConstraints(sizeConstraints)
-
+        
         if let width = width {
+            let sizeConstraints = view.constraints.filter { $0.firstAttribute == .width }
+            view.removeConstraints(sizeConstraints)
             view.widthAnchor.constraint(equalToConstant: width).isActive = true
         }
         if let height = height {
+            let sizeConstraints = view.constraints.filter { $0.firstAttribute == .height }
+            view.removeConstraints(sizeConstraints)
             view.heightAnchor.constraint(equalToConstant: height).isActive = true
         }
     }

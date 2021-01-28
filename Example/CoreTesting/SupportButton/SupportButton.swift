@@ -13,7 +13,7 @@ final class SupportButton: UIButton {
     }
 
     public override var intrinsicContentSize: CGSize {
-        CGSize(width: Dimension.buttonSize, height: Dimension.buttonSize)
+        return CGSize(width: Dimension.buttonSize, height: Dimension.buttonSize)
     }
 
     // MARK: - Private Methods
@@ -21,6 +21,7 @@ final class SupportButton: UIButton {
     private func setupView() {        
         backgroundColor = .black
         translatesAutoresizingMaskIntoConstraints = false
+        adjustsImageSizeForAccessibilityContentSizeCategory = true
         layer.cornerRadius = CGFloat(Dimension.buttonSize / 2)
         setImage(#imageLiteral(resourceName: "tradingLogo"), for: .normal)
     }

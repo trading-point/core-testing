@@ -51,7 +51,7 @@ public extension SnapshotTestConfig {
                 userInterfaceStyle: .light,
                 preferredContentSizeCategory: .extraExtraExtraLarge
             )
-            let large = ImageSnapshotConfig.iPhone8Plus(
+            let large = ImageSnapshotConfig.iPhoneX(
                 userInterfaceStyle: .dark,
                 preferredContentSizeCategory: .extraSmall
             )
@@ -169,7 +169,7 @@ public extension SnapshotTestConfig {
         
         
         /**
-         Used to test how a VC looks like in **small (iPhoneSe) and large width (iPhone8Plus) phone**
+         Used to test how a VC looks like in **small (iPhoneSe) and large width (iPhoneX) phone**
          configurations. Every VC should include at least one such test.
          
          ~~~
@@ -209,7 +209,7 @@ public extension ViewImageConfig {
     }()
     
     static let large: ViewImageConfig = {
-        var config: ViewImageConfig = .iPhone8Plus
+        var config: ViewImageConfig = .iPhoneX
         config.traits = UITraitCollection(traitsFrom: [
             config.traits,
             .init(preferredContentSizeCategory: .large)
